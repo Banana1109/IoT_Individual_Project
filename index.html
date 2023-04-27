@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+	<head>
+		<title> Arduino Web Server </title>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	</head>
+	<body>
+		<h1> Arduino Web Server </h1>
+		<h2> Toggle buttons:</h2>
+		{% for pin in pins %}
+		<h3> {{pins[pin].name}}</h3>
+		<div id="pin{{pin}}-on" style="display: none;">
+		is currently <strong>on</strong></h2><div class="row"><div class="col-md-2">
+		<a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a></div></div>
+		</div>
+
+		<div id="pin{{pin}}-off" style="display: none;">
+		is currently <strong>off</strong></h2><div class="row"><div class="col-md-2">
+		<a href="/{{pin}}/on"  class="btn btn-block btn-lg btn-primary" role="button">Turn on</a></div></div>
+		</div>
+		{% endfor %}
+		<h2 >Humidity:</h2>
+		<h3 id="humid"></h3>
+		<h3 id="min"></h3>
+		<h3 id="max"></h3>
+		<h2>Humidity Sensor Threshold:</h2>
+		<h3 id="curr_threshold"></h3>
+		<form method="POST" action="/threshold">
+		<label for="threshold"><h3>Change Threshold:</h3></label>
+		<input type="number" name="threshold" id="threshold"></input>
+		<button type="submit">Change</button>
+		</form>
+		
+		<h2>Commands:</h2>
+		<h3> LED pin 6: <a href="/action1"> TURN ON</a></h3>
+		<h3> LED pin 6: <a href="/action2"> TURN OFF</a></h3>
+		<h3> FAN pin 3: <a href="/action3"> TURN ON</a></h3>
+		<h3> FAN pin 3: <a href="/action4"> TURN OFF</a></h3>
+		
+		<script>
+			function update_pins(){
+				$.getJSON("/_datas",function(data){
+					for (var pin in data["pins"]){
+						var state=data["pins"][pin];
+						if (state==1){
+							$("#pin"+pin+"-off").css('display','none');
+							$("#pin"+pin+"-on").css('display','block');
+						}
+						else {
+							$("#pin"+pin+"-on").css('display','none');
+							$("#pin"+pin+"-off").css('display','block');
+						}
+					}
+					$("#humid").html("Current: "+data["humid"]);
+					$("#min").html("Lowest Humidity: "+data["minmax"]["min"]);
+					$("#max").html("Highest Humidity: "+data["minmax"]["max"]);
+					$("#curr_threshold").html("Current Threshold: "+data["threshold"]);
+				})
+			}
+			setInterval(update_pins, 500);
+		</script>
+	</body>
+</html>
