@@ -13,10 +13,10 @@ pins = {
     3 : {'name' : 'FAN', 'state' : 0 }
     }
 def readData():
-    while ser.inWaiting()!=13:
-        if ser.inWaiting()<13:
+    while ser.inWaiting()!=19:
+        if ser.inWaiting()<19:
             pass
-        if ser.inWaiting()>13:
+        if ser.inWaiting()>19:
             ser.readline()
     ser.flush()
     data=ser.readline().decode('utf-8').rstrip()
